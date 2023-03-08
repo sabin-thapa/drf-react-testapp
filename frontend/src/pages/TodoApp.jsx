@@ -7,6 +7,7 @@ import getCookie from "../utils/getCookie";
 
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
+  const [editing, setEditing] = useState(false);
   const [activeItem, setActiveItem] = useState({
     id: null,
     taskName: "",
@@ -27,8 +28,14 @@ const TodoApp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(activeItem, "SUBMIT");
-    fetch(`${BASE_URL}/todo-create/`, {
+    // console.log(activeItem, "SUBMIT");
+    let fetchUrl;
+    {
+      !editing
+        ? (fetchUrl = `${BASE_URL}/todo-create/`)
+        : (fetchUrl = `${BASE_URL}/todo-update/${activeItem.id}`);
+    }
+    fetch(fetchUrl, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -44,6 +51,25 @@ const TodoApp = () => {
         console.error(err.message);
       });
   };
+
+  const handleEdit = (todo) => {
+    setActiveItem(todo);
+    setEditing(true);
+  };
+
+  const handleDelete = (todo) => {
+    fetch(`${BASE_URL}/todo-delete/${todo.id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json',
+            'X-CSRFToken': csrftoken
+        }
+    }).then(res => {
+        fetchTodos()
+    }).catch(err => {
+        console.error(err.message)
+    })
+  }
 
   useEffect(() => {
     console.log(BASE_URL, "BASE");
@@ -82,6 +108,18 @@ const TodoApp = () => {
           <div key={index} className="task-wrapper flex-wrapper">
             <div style={{ flex: 7 }}>
               <span> {todo.taskName}</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <button
+                className="btn btn-sm btn-outline-info"
+                onClick={() => handleEdit(todo)}
+              >
+                {" "}
+                Edit
+              </button>
+            </div>
+            <div style={{ flex: 1 }}>
+              <button className="btn btn-sm btn-outline-dark" onClick={() => handleDelete(todo)}> Delete </button>
             </div>
           </div>
         ))}
