@@ -22,7 +22,13 @@ def apiView(request):
     return Response(api_urls)
 
 @api_view(['GET'])
-def taskList(request):
+def todoList(request):
     todos = Todo.objects.all()
     serializer = TodoSerializer(todos, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def todoDetail(request, pk):
+    todos = Todo.objects.get(id=pk)
+    serializer = TodoSerializer(todos, many=False)
     return Response(serializer.data)
