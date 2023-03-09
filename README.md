@@ -11,3 +11,5 @@
  ```
  npm install
  ```
+Screenshot:
+![image](https://user-images.githubusercontent.com/51270026/224061131-4808bc34-3ff3-47a0-b2f5-3e1ce9d16776.png)
