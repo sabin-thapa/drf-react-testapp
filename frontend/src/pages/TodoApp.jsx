@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AddTodo from "../components/AddTodo";
-import FilterTodo from "../components/FilterTodo";
 import "../App.css";
 import { BASE_URL } from "../config";
 import getCookie from "../utils/getCookie";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
@@ -59,17 +58,40 @@ const TodoApp = () => {
 
   const handleDelete = (todo) => {
     fetch(`${BASE_URL}/todo-delete/${todo.id}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': csrftoken
-        }
-    }).then(res => {
-        fetchTodos()
-    }).catch(err => {
-        console.error(err.message)
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
     })
-  }
+      .then((res) => {
+        fetchTodos();
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
+
+  const strikeHandler = (todo) => {
+    todo.isCompleted = !todo.isCompleted;
+    fetch(`${BASE_URL}/todo-update/${todo.id}`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        isCompleted: todo.isCompleted,
+        taskName: todo.taskName,
+      }),
+    })
+      .then(() => {
+        fetchTodos();
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
 
   useEffect(() => {
     console.log(BASE_URL, "BASE");
@@ -77,54 +99,63 @@ const TodoApp = () => {
   }, []);
 
   return (
-    <div className="container">
-      <div className="form-wrapper">
+    <main className="container d-flex flex-column align-items-center">
+      <div className="m-4">
         <form id="form" onSubmit={handleSubmit}>
           <div className="flex-wrapper">
-            <div style={{ flex: 3 }}>
+            <div style={{ marginRight: "2rem", width: "25rem" }}>
               <input
                 className="form-control"
                 id="todo"
                 name="Todo"
-                placeholder="Todo..."
+                placeholder="Add Todo..."
                 onChange={handleChange}
                 value={activeItem.taskName}
               />
             </div>
-            <div style={{ flex: 1 }}>
+            <div >
               <input
-                className="btn btn-primary"
+                className="btn btn-outline-info "
                 id="submit"
-                type="submit"
                 name="Add"
+                type="submit"
               />
             </div>
           </div>
         </form>
       </div>
 
-      <div className="list-wrapper">
+      <div
+        className="card p-4"
+        style={{ width: "40rem", borderRadius: "0.8rem" }}
+      >
         {todos.map((todo, index) => (
-          <div key={index} className="task-wrapper flex-wrapper">
-            <div style={{ flex: 7 }}>
-              <span> {todo.taskName}</span>
+          <div
+            key={index}
+            className="task-wrapper flex-wrapper mt-3 pb-2 border-bottom border-secondary"
+          >
+            <div style={{ flex: 7 }} onClick={() => strikeHandler(todo)}>
+              {!todo.isCompleted ? (
+                <span> {todo.taskName}</span>
+              ) : (
+                <strike> {todo.taskName}</strike>
+              )}
             </div>
-            <div style={{ flex: 1 }}>
-              <button
-                className="btn btn-sm btn-outline-info"
-                onClick={() => handleEdit(todo)}
-              >
-                {" "}
-                Edit
-              </button>
+            <div style={{ flex: 1, mt: 4}}>
+              <FaEdit onClick={() => handleEdit(todo)} className='text-secondary' style={{cursor: 'pointer'}}/>
             </div>
-            <div style={{ flex: 1 }}>
-              <button className="btn btn-sm btn-outline-dark" onClick={() => handleDelete(todo)}> Delete </button>
+            <div>
+              <FaTrash
+                onClick={() => handleDelete(todo)}
+                className='text-danger'
+                style={{cursor: 'pointer'}}
+              />
+           
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 };
 
