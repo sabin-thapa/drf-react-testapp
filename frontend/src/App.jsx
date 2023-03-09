@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import TodoApp from "./pages/TodoApp";
+import TodoDetail from "./pages/TodoDetail";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Header />
         <Routes>
           <Route exact path="/" element={<TodoApp />} />
+          <Route exact path="/todo-detail/:id" element={<TodoDetail />} />
         </Routes>
         <Footer />
       </Router>

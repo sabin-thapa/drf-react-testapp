@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../App.css";
 import { BASE_URL } from "../config";
 import getCookie from "../utils/getCookie";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaLink } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
@@ -14,6 +15,7 @@ const TodoApp = () => {
   });
 
   const csrftoken = getCookie("csrftoken");
+  const navigate = useNavigate();
 
   const fetchTodos = () => {
     fetch(`${BASE_URL}/todos/`)
@@ -113,7 +115,7 @@ const TodoApp = () => {
                 value={activeItem.taskName}
               />
             </div>
-            <div >
+            <div>
               <input
                 className="btn btn-outline-info "
                 id="submit"
@@ -134,23 +136,32 @@ const TodoApp = () => {
             key={index}
             className="task-wrapper flex-wrapper mt-3 pb-2 border-bottom border-secondary"
           >
-            <div style={{ flex: 7 }} onClick={() => strikeHandler(todo)}>
+            <div style={{ flex: 7, cursor: "pointer" }}>
               {!todo.isCompleted ? (
-                <span> {todo.taskName}</span>
+                <>
+                  <span onClick={() => strikeHandler(todo)}>
+                    {" "}
+                    {todo.taskName}{" "}
+                  </span>
+                  <FaLink style={{ height: 10, width: 10, marginLeft: 5 }} onClick={() => navigate(`todo-detail/${todo.id}`)}/>
+                </>
               ) : (
-                <strike> {todo.taskName}</strike>
+                <strike onClick={() => strikeHandler(todo)}> {todo.taskName}</strike>
               )}
             </div>
-            <div style={{ flex: 1, mt: 4}}>
-              <FaEdit onClick={() => handleEdit(todo)} className='text-secondary' style={{cursor: 'pointer'}}/>
+            <div style={{ flex: 1, mt: 4 }}>
+              <FaEdit
+                onClick={() => handleEdit(todo)}
+                className="text-secondary"
+                style={{ cursor: "pointer" }}
+              />
             </div>
             <div>
               <FaTrash
                 onClick={() => handleDelete(todo)}
-                className='text-danger'
-                style={{cursor: 'pointer'}}
+                className="text-danger"
+                style={{ cursor: "pointer" }}
               />
-           
             </div>
           </div>
         ))}
