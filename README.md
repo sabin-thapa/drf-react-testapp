@@ -1,4 +1,6 @@
 # drf-react-todoapp
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/51270026/224065097-22e3a64a-8934-4868-a945-b88915ddcfa2.gif)
+
 
 > Install the backend requirements by navigating to the backend folder and using the command:
 ```
