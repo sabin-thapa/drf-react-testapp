@@ -23,7 +23,7 @@ def apiView(request):
 
 @api_view(['GET'])
 def todoList(request):
-    todos = Todo.objects.all()
+    todos = Todo.objects.all().order_by('-date_posted')
     serializer = TodoSerializer(todos, many=True)
     return Response(serializer.data)
 
